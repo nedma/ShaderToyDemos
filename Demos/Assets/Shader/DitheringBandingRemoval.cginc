@@ -95,21 +95,21 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     
 	vec3 outcol;
 
-    if ( pos.y > 11.0/12.0 )
+    if ( pos.y > 11.0/12.0 ) // row 1
 	{
 		outcol = vec3(its.xxx);
 	}
-	else if ( pos.y > 10.0/12.0 )
+	else if ( pos.y > 10.0/12.0 ) // row 1
 	{
 		outcol = vec3( its.xxx + 0.5 / 255.0 ); //rounded
 	}
-	else if ( pos.y > 9.0/12.0 )
+	else if ( pos.y > 9.0/12.0 ) // row 3
 	{
 		//note: scanline dithering
 		float ofs = floor(mod(fragCoord.y,2.0))*0.5;
 		outcol = vec3( its.xxx + ofs/255.0);		
 	}
-	else if( pos.y > 8.0/12.0)
+	else if( pos.y > 8.0/12.0) // row 4
 	{
         //note: offset r, g, b, limbo-style
 		outcol = vec3(its, its + 1.0/3.0/256.0, its + 2.0/3.0/256.0);		
@@ -119,7 +119,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 		//vec2 rg = mod( floor( vec2(4.0,2.0) * e * 255.0), 2.0 );
 		//outcol = floor( its*255.0 )/255.0 + vec3(rg,0.0) / 255.0;		
 	}
-    else if ( pos.y > 7.0/12.0 )
+    else if ( pos.y > 7.0/12.0 ) // row 5
     {
         //note: 2x2 ordered dithering, ALU-based (omgthehorror)
 		vec2 ij = floor(mod( fragCoord.xy, 2.0));
@@ -136,7 +136,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 		
 		outcol = vec3( its.xxx + d/255.0 );
     }
-	else if ( pos.y > 6.0/12.0 )
+	else if ( pos.y > 6.0/12.0 ) // row 6
 	{
 		//note: 8x8 ordered dithering, texture-based
 		const float MIPBIAS = -10.0;
@@ -144,7 +144,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
 		outcol = vec3( its.xxx + ofs/255.0 );
 	}
-    else if ( pos.y > 5.0/12.0 )
+    else if ( pos.y > 5.0/12.0 ) // row 7
     {
         vec2 seed = fragCoord.xy;
         #if defined( ANIMATED )
@@ -158,7 +158,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
         outcol = its + rnd/255.0;
         #endif
     }
-	else if( pos.y > 4.0/12.0 )
+	else if( pos.y > 4.0/12.0 ) // row 8
 	{
         #ifdef CHROMATIC
 		outcol = vec3(its) + ScreenSpaceDither( fragCoord );
@@ -166,7 +166,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
         outcol = its + ScreenSpaceDither( fragCoord ).g;
         #endif
 	}
-    else if( pos.y > 3.0/12.0 )
+    else if( pos.y > 3.0/12.0 ) // row 9
     {
         //note: from comment by CeeJayDK
 		float dither_bit = 8.0; //Bit-depth of display. Normally 8 but some LCD monitors are 7 or even 6-bit.	
@@ -186,7 +186,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 		//shift the color by dither_shift
 		outcol = its + 0.5/255.0 + dither_shift_RGB; 
     }
-    else if ( pos.y > 2.0/12.0 )
+    else if ( pos.y > 2.0/12.0 ) // row 10
 	{
         vec2 seed = fragCoord.xy;
         #if defined( ANIMATED )
@@ -205,7 +205,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
         outcol = its + (bn_tri*2.0-0.5)/255.0;
         #endif
 	}
-    else if ( pos.y > 1.0/12.0 )
+    else if ( pos.y > 1.0/12.0 ) // row 11
     {
         //note: triangluarly distributed noise, 1.5LSB
         vec2 seed = pos;
