@@ -64,7 +64,8 @@ SubShader {
 		{
 			half4 tex = texCUBE (_Tex, i.texcoord);
 			//half3 c = DecodeHDR (tex, _Tex_HDR);
-			half3 c = DecodeLogLuv(tex);
+			//half3 c = DecodeLogLuv(tex);
+			half3 c = DecodeRgbm(tex, RgbmMaxValue);
 
 			c = c * _Tint.rgb * unity_ColorSpaceDouble.rgb;
 			c *= _Exposure;
