@@ -5,13 +5,21 @@ using UnityEngine;
 
 public class HDRIBaker : MonoBehaviour
 {
+    public enum EMethod
+    {
+        LogLuv = 0,
+        RGBE,
+    }
+    public EMethod Method = EMethod.RGBE;
+
+
     public Texture HDR_Image;
 
     Material m_BakeMat;
     public Texture2D m_BakeResult;
     public RenderTexture m_RT;
 
-    public void Bake()
+    public void Bake(string saveDir)
     {
         if (HDR_Image == null)
             return;
@@ -22,10 +30,15 @@ public class HDRIBaker : MonoBehaviour
             m_BakeMat = new Material(sh);
         }
 
-        RenderTexture tempRT = RenderTexture.GetTemporary(HDR_Image.width, HDR_Image.height, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
-        Graphics.Blit(HDR_Image, tempRT, m_BakeMat);
+        RenderTexture tempRT = RenderTexture.GetTemporary(HDR_Image.width, HDR_Image.height, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Linear);
+        Graphics.Blit(HDR_Image, tempRT, m_BakeMat, (int)Method);
 
-        SaveRenderTextureToPNG(tempRT, "D:\\", HDR_Image.name + "_Encoded");
+
+
+
+
+
+        SaveRenderTextureToPNG(tempRT, saveDir, HDR_Image.name + "_Encoded");
         m_RT = tempRT;
         //RenderTexture.ReleaseTemporary(tempRT);
     }
