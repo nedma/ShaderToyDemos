@@ -60,8 +60,29 @@ Shader "Hidden/HDRIBaker"
 			ENDCG
 		} // pass
 
+		// 1 - encode LogLUV, output alpha
+		Pass
+		{
+			CGPROGRAM
 
-		// 1 - encode RGBM
+			half4 frag(v2f i) : COLOR
+			{
+				//half4 color = texCUBE(_MainTex, i.texcoord);
+				half4 tex = tex2D(_MainTex, i.texcoord);
+
+				half4 outputColor = EncodeLogLuv(tex.rgb);
+
+				return outputColor.a;
+			}
+
+			#pragma vertex vert
+			#pragma fragment frag
+
+			ENDCG
+		}
+
+
+		// 2 - encode RGBM
 		Pass
 		{
 			CGPROGRAM
@@ -74,15 +95,85 @@ Shader "Hidden/HDRIBaker"
 				//half4 color = texCUBE(_MainTex, i.texcoord);
 				half4 tex = tex2D(_MainTex, i.texcoord);
 
+				//tex = pow(tex, 1.5);
 
-				half4 color = EncodeRgbm(tex.rgb, RgbmMaxValue);
+				half4 color = EncodeRgbm(tex.rgb, _RgbmMaxValue);
 
 				return color;
 			}
 
-				ENDCG
-			} // pass
+			ENDCG
+		}
 
+		// 3 - encode RGBM
+		Pass
+		{
+			CGPROGRAM
+			#pragma vertex vert
+			#pragma fragment frag
+
+
+			half4 frag(v2f i) : COLOR
+			{
+				//half4 color = texCUBE(_MainTex, i.texcoord);
+				half4 tex = tex2D(_MainTex, i.texcoord);
+
+				//tex = pow(tex, 1.5);
+
+				half4 color = EncodeRgbm(tex.rgb, _RgbmMaxValue);
+
+				return color.a;
+			}
+
+			ENDCG
+		}
+
+
+		// 4 - encode RGBE
+		Pass
+		{
+			CGPROGRAM
+			#pragma vertex vert
+			#pragma fragment frag
+
+
+			half4 frag(v2f i) : COLOR
+			{
+				//half4 color = texCUBE(_MainTex, i.texcoord);
+				half4 tex = tex2D(_MainTex, i.texcoord);
+
+				//tex = pow(tex, 1.5);
+
+				half4 color = EncodeRgbe(tex.rgb);
+
+				return color;
+			}
+
+			ENDCG
+		}
+
+		// 5 - encode RGBE
+		Pass
+		{
+			CGPROGRAM
+			#pragma vertex vert
+			#pragma fragment frag
+
+
+			half4 frag(v2f i) : COLOR
+			{
+				//half4 color = texCUBE(_MainTex, i.texcoord);
+				half4 tex = tex2D(_MainTex, i.texcoord);
+
+				//tex = pow(tex, 1.5);
+
+				half4 color = EncodeRgbe(tex.rgb);
+
+				return color.aaaa;
+			}
+
+			ENDCG
+		}
 
 	} // subshader
 }

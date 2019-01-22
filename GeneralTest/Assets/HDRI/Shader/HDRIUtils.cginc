@@ -143,6 +143,9 @@ float3 DecodeRgbe(float4 rgbe)
 ////////////////////////////////////////////////////////////////////////////////////////////
 // RGBM
 
+
+uniform float _RgbmMaxValue = 3;
+
 /// Encodes the given color to RGBM format.
 /// \param[in] color    The original color.
 /// \param[in] maxValue The max value, e.g. 6 (if color is gamma corrected) =
