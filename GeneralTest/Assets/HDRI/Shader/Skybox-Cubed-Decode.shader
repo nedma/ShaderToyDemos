@@ -3,9 +3,11 @@
 Shader "Test/Cubemap Decode" {
 Properties {
 	_Tint ("Tint Color", Color) = (.5, .5, .5, .5)
-	[Gamma] _Exposure ("Exposure", Range(0, 8)) = 1.0
+	_Exposure ("Exposure", Range(0, 16)) = 1.0
+	_Gamma("Gamma", Range(0, 8)) = 2.2
 	_Rotation ("Rotation", Range(0, 360)) = 0
 	[NoScaleOffset] _Tex ("Cubemap   (HDR)", Cube) = "grey" {}
+	[NoScaleOffset] _Tex2("Cubemap   (HDR)", Cube) = "grey" {}
 }
 
 SubShader {
@@ -19,14 +21,21 @@ SubShader {
 		#pragma fragment frag
 		#pragma target 2.0
 
+		#pragma multi_compile _ LogLuv RGBM RGBE RGBLum
+
 		#include "UnityCG.cginc"
 		#include "HDRIUtils.cginc"
 
 
 		samplerCUBE _Tex;
 		half4 _Tex_HDR;
+
+		samplerCUBE _Tex2;
+		half4 _Tex_HDR2;
+
 		half4 _Tint;
 		half _Exposure;
+		half _Gamma;
 		float _Rotation;
 
 		float3 RotateAroundYInDegrees (float3 vertex, float degrees)
@@ -63,12 +72,28 @@ SubShader {
 		fixed4 frag (v2f i) : SV_Target
 		{
 			half4 tex = texCUBE (_Tex, i.texcoord);
-			//half3 c = DecodeHDR (tex, _Tex_HDR);
-			//half3 c = DecodeLogLuv(tex);
-			half3 c = DecodeRgbm(tex, RgbmMaxValue);
+			half4 tex2 = texCUBE(_Tex2, i.texcoord);
 
-			c = c * _Tint.rgb * unity_ColorSpaceDouble.rgb;
+		#if defined(LogLuv)
+			half3 c = DecodeLogLuv(tex);
+		#elif defined(RGBM)
+			half3 c = DecodeRgbm(half4(tex.rgb, tex2.r), _RgbmMaxValue);
+		#elif defined(RGBE)
+			half3 c = DecodeRgbe(half4(tex.rgb, tex2.r));
+		#elif defined(RGBLum)
+			half3 c = tex * tex2.a * _RgbmMaxValue;
+			//half3 c = tex2;
+		#else
+			half3 c = DecodeHDR(tex, _Tex_HDR);
+		#endif
+			
+
+			c = c * _Tint.rgb;
 			c *= _Exposure;
+
+			c.rgb = pow(c.rgb, _Gamma);
+			
+
 			return half4(c, 1);
 		}
 		ENDCG 

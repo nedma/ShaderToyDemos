@@ -12,6 +12,9 @@ public class HDRIBaker : MonoBehaviour
         RGBM = 2,
         RGBE = 4,
         RGBLum= 6,
+
+
+        Max = RGBLum+2,
     }
     public EMethod Method = EMethod.RGBE;
     public bool SeperateColorAndAlpha = false;
@@ -25,6 +28,8 @@ public class HDRIBaker : MonoBehaviour
     public Texture2D m_BakeResult;
     public RenderTexture m_RT;
     public RenderTexture m_RT2;
+
+    public Material SkyMat;
 
 
     void Awake()
@@ -46,7 +51,17 @@ public class HDRIBaker : MonoBehaviour
 
         //m_BakeMat.SetFloat("_RgbmMaxValue", RGBM_MaxValue);
         Shader.SetGlobalFloat("_RgbmMaxValue", RGBM_MaxValue);
+        if (SkyMat != null)
+        {
+            for (int i = 0; i < (int)EMethod.Max; i+=2)
+            {
+                EMethod e = (EMethod)i;
+                SkyMat.DisableKeyword(e.ToString());
+            }
 
+            string keyword = Method.ToString();
+            SkyMat.EnableKeyword(keyword);
+        }
 
         RenderTexture tempRT = RenderTexture.GetTemporary(HDR_Image.width, HDR_Image.height, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Linear);
         Graphics.Blit(HDR_Image, tempRT, m_BakeMat, (int)Method);
