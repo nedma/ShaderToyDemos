@@ -175,5 +175,60 @@ Shader "Hidden/HDRIBaker"
 			ENDCG
 		}
 
+		// 6 - encode RGBE
+		Pass
+		{
+			CGPROGRAM
+			#pragma vertex vert
+			#pragma fragment frag
+
+
+			half4 frag(v2f i) : COLOR
+			{
+				//half4 color = texCUBE(_MainTex, i.texcoord);
+				half4 tex = tex2D(_MainTex, i.texcoord);
+
+				half lum = _Luminance(tex);
+
+				if (lum > 1)
+				{
+					tex.rgb /= lum;
+				}
+
+				half4 color = half4(tex.rgb, lum);
+				return color;
+			}
+
+			ENDCG
+		}
+
+		// 7 - encode RGBE
+		Pass
+		{
+			CGPROGRAM
+			#pragma vertex vert
+			#pragma fragment frag
+
+
+			half4 frag(v2f i) : COLOR
+			{
+				//half4 color = texCUBE(_MainTex, i.texcoord);
+				half4 tex = tex2D(_MainTex, i.texcoord);
+
+				half lum = _Luminance(tex);
+
+				if (lum > 1)
+				{
+					return lum / _RgbmMaxValue;
+				}
+				else
+				{
+					return 1 / _RgbmMaxValue;
+				}
+			}
+
+			ENDCG
+		}
+
 	} // subshader
 }
