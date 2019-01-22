@@ -10,7 +10,8 @@ public class HDRIBaker : MonoBehaviour
     {
         LogLuv = 0,
         RGBM = 2,
-        RGBE =4,
+        RGBE = 4,
+        RGBLum= 6,
     }
     public EMethod Method = EMethod.RGBE;
     public bool SeperateColorAndAlpha = false;
@@ -59,7 +60,7 @@ public class HDRIBaker : MonoBehaviour
         {
             RenderTexture tempRT2 = RenderTexture.GetTemporary(HDR_Image.width, HDR_Image.height, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Linear);
             Graphics.Blit(HDR_Image, tempRT2, m_BakeMat, (int)(Method + 1));
-            SaveRenderTextureToPNG(tempRT, saveDir, HDR_Image.name + "_Encoded_Alpha");
+            SaveRenderTextureToPNG(tempRT2, saveDir, HDR_Image.name + "_Encoded_Alpha");
 
             m_RT2 = tempRT2;
         }
