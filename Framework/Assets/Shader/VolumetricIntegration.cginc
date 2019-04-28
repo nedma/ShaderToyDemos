@@ -213,6 +213,7 @@ vec3 evaluateLight(in vec3 pos, in vec3 normal)
 	return max(0.0, dot(normal, Lnorm)) * evaluateLight(pos);
 }
 
+// [nedma]Coefficient
 // To simplify: wavelength independent scattering and extinction
 void getParticipatingMedia(out float sigmaS, out float sigmaE, in vec3 pos)
 {
@@ -228,7 +229,7 @@ void getParticipatingMedia(out float sigmaS, out float sigmaE, in vec3 pos)
 
 	sigmaS = constantFog + heightFog*fogFactor + sphereFog;
 
-	const float sigmaA = 0.0;
+	const float sigmaA = 0.0; // [nedma]absorption factor?
 	sigmaE = max(0.000000001, sigmaA + sigmaS); // to avoid division by zero extinction
 }
 
@@ -290,9 +291,12 @@ void traceScene(bool improvedScattering, vec3 rO, vec3 rD, inout vec3 finalPos, 
 			// See slide 28 at http://www.frostbite.com/2015/08/physically-based-unified-volumetric-rendering-in-frostbite/
 			vec3 S = evaluateLight(p) * sigmaS * phaseFunction()* volumetricShadow(p, lightPos);// incoming light
 			vec3 Sint = (S - S * exp(-sigmaE * dd)) / sigmaE; // integrate along the current step segment
+			
+			// [nedma]accumulated inscattering light: ADD
 			scatteredLight += transmittance * Sint; // accumulate and also take into account the transmittance from previous steps
 
-													// Evaluate transmittance to view independentely
+			// Evaluate transmittance to view independentely
+			// [nedma]accumulated extinction: MULTIPLY
 			transmittance *= exp(-sigmaE * dd);
 		}
 		else
@@ -307,7 +311,7 @@ void traceScene(bool improvedScattering, vec3 rO, vec3 rD, inout vec3 finalPos, 
 #endif
 		}
 
-
+		// [nedma]dd: distance<ray march postion, surface>
 		dd = getClosestDistance(p, material);
 		if (dd<0.2)
 			break; // give back a lot of performance without too much visual loss
@@ -342,7 +346,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
 	vec3 camY = vec3(0.0, 1.0, 0.0);
 	vec3 camZ = vec3(0.0, 0.0, 1.0);
 
-	vec3 rO = camPos;
+	vec3 rO = camPos; //[nedma]ray march start from cam 
 	vec3 rD = normalize(uv2.x*camX + uv2.y*camY + camZ);
 	vec3 finalPos = rO;
 	vec3 albedo = vec3(0.0, 0.0, 0.0);
