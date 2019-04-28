@@ -1,4 +1,5 @@
-﻿Shader "Shadertoy/IqCloud" {
+﻿Shader "Shadertoy/VolumetricIntegration"
+{
 	Properties
 	{
 		iMouse("Mouse Pos", Vector) = (100, 100, 0, 0)
@@ -8,16 +9,16 @@
 
 	CGINCLUDE
 	#include "UnityCG.cginc"   
-	#include "IqCloudLib.cginc"
+	#include "VolumetricIntegration.cginc"
 	#pragma target 3.0      
 
-	struct v2f 
+	struct v2f
 	{
 		float4 pos : SV_POSITION;
 		float4 scrPos : TEXCOORD0;
 	};
 
-	v2f vert(appdata_base v) 
+	v2f vert(appdata_base v)
 	{
 		v2f o;
 		o.pos = UnityObjectToClipPos(v.vertex);
@@ -59,3 +60,4 @@
 
 	FallBack Off
 }
+
