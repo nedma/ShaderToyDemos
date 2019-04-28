@@ -195,6 +195,7 @@ vec3 calcNormal(in vec3 pos)
 
 }
 
+// [nedma]Get distance-attenuated light
 vec3 evaluateLight(in vec3 pos)
 {
 	vec3 lightPos = LPOS;
@@ -215,7 +216,7 @@ vec3 evaluateLight(in vec3 pos, in vec3 normal)
 // To simplify: wavelength independent scattering and extinction
 void getParticipatingMedia(out float sigmaS, out float sigmaE, in vec3 pos)
 {
-	float heightFog = 7.0 + D_FOG_NOISE*3.0*clamp(displacementSimple(pos.xz*0.005 + iTime*0.01), 0.0, 1.0);
+	float heightFog = 7.0 + D_FOG_NOISE * 3.0 * clamp(displacementSimple(pos.xz*0.005 + iTime*0.01), 0.0, 1.0);
 	heightFog = 0.3*clamp((heightFog - pos.y)*1.0, 0.0, 1.0);
 
 	const float fogFactor = 1.0 + D_STRONG_FOG * 5.0;
