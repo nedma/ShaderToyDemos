@@ -3,6 +3,8 @@ using System.Collections;
 
 public class ShaderToyHelper : MonoBehaviour
 {
+    private bool _lockInput = false;
+
 
     private Material _material = null;
 
@@ -33,7 +35,12 @@ public class ShaderToyHelper : MonoBehaviour
             mousePosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0.0f);
         }
 
-        if (_material != null)
+        if (Input.GetMouseButtonUp(1))
+        {
+            _lockInput = !_lockInput;
+        }
+
+        if (_material != null && !_lockInput)
         {
             _material.SetVector("iMouse", mousePosition);
         }
