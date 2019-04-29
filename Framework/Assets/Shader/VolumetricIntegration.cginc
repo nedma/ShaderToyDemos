@@ -258,6 +258,7 @@ float volumetricShadow(in vec3 from, in vec3 to)
 #endif
 }
 
+// [nedma]raymarch starting from camera
 void traceScene(bool improvedScattering, vec3 rO, vec3 rD, inout vec3 finalPos, inout vec3 normal, inout vec3 albedo, inout vec4 scatTrans)
 {
 	const int numIter = 100;
@@ -311,7 +312,7 @@ void traceScene(bool improvedScattering, vec3 rO, vec3 rD, inout vec3 finalPos, 
 #endif
 		}
 
-		// [nedma]dd: distance<ray march postion, surface>
+		// [nedma]dd: 如果没hit任何物体则step步长为1.0，否则为当前pos到击中pos的距离
 		dd = getClosestDistance(p, material);
 		if (dd<0.2)
 			break; // give back a lot of performance without too much visual loss
@@ -346,7 +347,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
 	vec3 camY = vec3(0.0, 1.0, 0.0);
 	vec3 camZ = vec3(0.0, 0.0, 1.0);
 
-	vec3 rO = camPos; //[nedma]ray march start from cam 
+	vec3 rO = camPos;
 	vec3 rD = normalize(uv2.x*camX + uv2.y*camY + camZ);
 	vec3 finalPos = rO;
 	vec3 albedo = vec3(0.0, 0.0, 0.0);
