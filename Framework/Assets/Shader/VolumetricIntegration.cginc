@@ -213,7 +213,7 @@ vec3 evaluateLight(in vec3 pos, in vec3 normal)
 	return max(0.0, dot(normal, Lnorm)) * evaluateLight(pos);
 }
 
-// [nedma]Coefficient
+// [nedma]calculate scattering & extinction Coefficients
 // To simplify: wavelength independent scattering and extinction
 void getParticipatingMedia(out float sigmaS, out float sigmaE, in vec3 pos)
 {
